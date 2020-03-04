@@ -99,7 +99,8 @@ class HRDeltaView extends Ui.DataField {
         // Allow same space at bottom as top to avoid circle cut off
         vLayoutHeight = (height - top * 2 - (4 * BORDER_PAD)) / 4;
         // test font in strip for text results
-        vLayoutFontIdx = selectFont(dc, PercentDataBlock.mLabelString, (vLayoutWidth / 2) - (2 * BORDER_PAD) - 30, vLayoutHeight);
+        // Use longest string here
+        vLayoutFontIdx = selectFont(dc, AuxDataBlock.mLabelString, (vLayoutWidth / 2) - (2 * BORDER_PAD) - 30, vLayoutHeight);
 
         mDataFont = fonts[vLayoutFontIdx];
         // Set all text same size except units
@@ -220,8 +221,8 @@ class HRDeltaView extends Ui.DataField {
         	mSensorFound = true;
         	mTicker =6;
         	mSensor.searching = false;
-        	mSensor.data.currentHeartRate = 10;
-        	mSensor.data.OHRHeartRate = 200;
+        	mSensor.data.currentHeartRate = 110;
+        	mSensor.data.OHRHeartRate = 100;
         	mSensor.data.OHRHeartRateDelta = mSensor.data.OHRHeartRate - mSensor.data.currentHeartRate ;
 
         }
