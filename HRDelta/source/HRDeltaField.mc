@@ -2,12 +2,15 @@ using Toybox.Application as App;
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Graphics;
 using Toybox.System as System;
+//using Toybox.Lang as Lg;
 
 const BORDER_PAD = 4;
 const UNITS_SPACING = 2;
 const TOP_PAD = 10;
+// bodge to add % to output
+const BODGE = 10;
 
-const DEBUGGING = false;
+const DEBUGGING = true;
 
 var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE,
              Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
@@ -33,7 +36,6 @@ class HRDeltaView extends Ui.DataField {
     hidden var AuxDataBlock = new DataViewBlock();
     hidden var OHRDataBlock = new DataViewBlock();
     hidden var DeltaDataBlock = new DataViewBlock();
-    
     
     // Units string
     hidden var mUnitsString = Ui.loadResource(Rez.Strings.lHeartRateUnits);
@@ -113,7 +115,7 @@ class HRDeltaView extends Ui.DataField {
        	// Data X position always same     	
 	   	AuxDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
 	    OHRDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
-	   	DeltaDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
+	   	DeltaDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2) - (vLayoutWidth / 9);
 	   		    
 	    // This order defines draw order
 	    var mPosition1 = top;
@@ -206,7 +208,10 @@ class HRDeltaView extends Ui.DataField {
         	mSensorFound = true;
         	mTicker =6;
         	mSensor.searching = false;
-        	mSensor.data.currentHeartRate = 100;
+        	mSensor.data.currentHeartRate = 70;
+        	mSensor.data.OHRHeartRate = 100;
+        	mSensor.data.OHRHeartRateDelta = mSensor.data.OHRHeartRate - mSensor.data.currentHeartRate ;
+
         }
 
         // Update status
@@ -236,15 +241,23 @@ class HRDeltaView extends Ui.DataField {
 	            if  (mSensor.data.currentHeartRate == null) {
 	            	dAuxHeartRate = "--";
 	            } else {
-	            	dAuxHeartRate = mSensor.data.currentHeartRate.format("%.0u");
+	            	if (mSensor.data.currentHeartRate == 0) {
+	            		dAuxHeartRate = "0";
+	            	} else{
+	            		dAuxHeartRate = mSensor.data.currentHeartRate.format("%.0u");
+	            	}
 	            }
         		
         		var dOHRHeartRateDelta; 
         		if  (mSensor.data.OHRHeartRateDelta == null) {
 	            	dOHRHeartRateDelta = "--";
 	            } else {
-	            	dOHRHeartRateDelta = mSensor.data.OHRHeartRateDelta.format("%+.0i");
-	            }
+		            if  (mSensor.data.OHRHeartRateDelta == 0) {
+		            	dOHRHeartRateDelta = "0";
+		            } else {
+		            	dOHRHeartRateDelta = mSensor.data.OHRHeartRateDelta.format("%+.0i");
+		            }
+        		}
         		
         		var dOHRHeartRate; 
 				if  (mSensor.data.OHRHeartRate == null) {
@@ -265,10 +278,41 @@ class HRDeltaView extends Ui.DataField {
 	            dc.drawText(DeltaDataBlock.mLabelX, DeltaDataBlock.mLabelY, mLabelFont, DeltaDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_CENTER);
 	            dc.drawText(DeltaDataBlock.mDataX, DeltaDataBlock.mDataY, mDataFont, dOHRHeartRateDelta, Graphics.TEXT_JUSTIFY_CENTER);
 	            dc.drawText(DeltaDataBlock.mUnitsX + (dc.getTextWidthInPixels(dOHRHeartRateDelta, mDataFont) / 2), DeltaDataBlock.mUnitsY, mUnitsFont, mUnitsString, Graphics.TEXT_JUSTIFY_LEFT);
+	            
+	            // add code to display % difference
+	            var mPercent;
+	            if (mSensor.data.currentHeartRate == 0) {
+	            	// avoid divide by zero
+	            	mPercent = 0;
+	            } else {
+	            	mPercent = (mSensor.data.OHRHeartRateDelta / mSensor.data.currentHeartRate) * 100;
+	            	if (DEBUGGING == true) { System.println("mPercent " + mPercent);}
+	            }
+	            
+	            var mCalcPercent;
+	            if (mSensor.data.OHRHeartRateDelta == 0) {
+	            	// green OK
+	            	dc.setColor( Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
+	            	mCalcPercent = "0%";
+	            } else {
+	            	dc.setColor( Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+	            	mCalcPercent = mPercent.format("%+.0i") + "%";  
+	            	mCalcPercent = ( mPercent == 0 ? "0%" : mCalcPercent); 	            
+				}
+				if (DEBUGGING == true) {
+					System.println("Delta " + mSensor.data.OHRHeartRateDelta);
+					System.println("Current " + mSensor.data.currentHeartRate);
+					System.println("calc percent " + mCalcPercent);
+					System.println("mPercent " + mPercent);
+				}
+				
+	            dc.drawText(DeltaDataBlock.mUnitsX + dc.getTextWidthInPixels(dOHRHeartRateDelta, mDataFont) + dc.getTextWidthInPixels(mUnitsString, mUnitsFont) +
+	            	BODGE, DeltaDataBlock.mDataY, mDataFont, mCalcPercent, Graphics.TEXT_JUSTIFY_LEFT);
+	            dc.setColor(fgColor, Graphics.COLOR_TRANSPARENT);
 	            	
 	            if (separator != null) {
 	                dc.setColor(fgColor, fgColor);
-	                dc.drawLine(separator[0], separator[1], separator[2], separator[3]);
+	                dc.drawLine(separator[0], separator[1], separator[2], separator[3]); 
 	            }
 	        }
 	    }
