@@ -7,7 +7,7 @@
     <string id="lAuxHeartRate">Strap HR</string>
     <string id="lOHRHeartRate">OHR HR</string>
     <string id="lDeltaHeartRate">Delta HR</string> 
-    <string id="lDeltaPercent">% delta to Strap</string>   
+    <string id="lDeltaPercent">% Strap</string>   
     <string id="lCurrentHeartRateChartTitle">ANT+ Strap Heart Rate</string>
     <string id="lDeltaHeartRateChartTitle">OHR - strap (delta) Heart Rate</string>
 </strings>
