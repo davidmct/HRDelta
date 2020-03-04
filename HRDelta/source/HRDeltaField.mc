@@ -7,8 +7,6 @@ using Toybox.System as System;
 const BORDER_PAD = 4;
 const UNITS_SPACING = 2;
 const TOP_PAD = 10;
-// bodge to add % to output
-const BODGE = 10;
 
 const DEBUGGING = true;
 
@@ -36,6 +34,7 @@ class HRDeltaView extends Ui.DataField {
     hidden var AuxDataBlock = new DataViewBlock();
     hidden var OHRDataBlock = new DataViewBlock();
     hidden var DeltaDataBlock = new DataViewBlock();
+    hidden var PercentDataBlock = new DataViewBlock();
     
     // Units string
     hidden var mUnitsString = Ui.loadResource(Rez.Strings.lHeartRateUnits);
@@ -80,6 +79,7 @@ class HRDeltaView extends Ui.DataField {
 	    AuxDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lAuxHeartRate);
 	    OHRDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lOHRHeartRate);
 	    DeltaDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lDeltaHeartRate);
+	    PercentDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lDeltaPercent);
 	    
 	    var top = TOP_PAD + BORDER_PAD;
 	    
@@ -92,9 +92,9 @@ class HRDeltaView extends Ui.DataField {
 
         // Compute data width/height for vertical layouts
         vLayoutWidth = width - (2 * BORDER_PAD);
-        // We have 3 sets of lable/data to fit in remaining vertical height
+        // We have 4 sets of lable/data to fit in remaining vertical height
         // Allow same space at bottom as top to avoid circle cut off
-        vLayoutHeight = (height - top * 2 - (3 * BORDER_PAD)) / 6;
+        vLayoutHeight = (height - top * 2 - (4 * BORDER_PAD)) / 8;
         // test font in strip for text results
         vLayoutFontIdx = selectFont(dc, (vLayoutWidth - mUnitsWidth), vLayoutHeight);
 
@@ -104,6 +104,9 @@ class HRDeltaView extends Ui.DataField {
         mDataFontAscent = Graphics.getFontAscent(mDataFont);
         mLabelFontAscent = mDataFontAscent;
         
+        // units font same as others for now
+        mUnitsFont = mLabelFont;
+        
         // now set coordinates of all elements               
 		// May need to check that if data and label font size different still works
      	
@@ -111,16 +114,19 @@ class HRDeltaView extends Ui.DataField {
         AuxDataBlock.mLabelX = width / 2;
        	OHRDataBlock.mLabelX = width / 2;
        	DeltaDataBlock.mLabelX = width / 2;
+       	PercentDataBlock.mLabelX = width / 2;
        	
        	// Data X position always same     	
 	   	AuxDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
 	    OHRDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
-	   	DeltaDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2) - (vLayoutWidth / 9);
+	   	DeltaDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2) - (mUnitsWidth / 2);
+	   	PercentDataBlock.mDataX = BORDER_PAD + (vLayoutWidth / 2);
 	   		    
 	    // This order defines draw order
 	    var mPosition1 = top;
 	    var mPosition2 = mPosition1 + (BORDER_PAD + vLayoutHeight) * 2;
 	    var mPosition3 = mPosition2 + (BORDER_PAD + vLayoutHeight) * 2;
+	    var mPosition4 = mPosition3 + (BORDER_PAD + vLayoutHeight) * 2;
 	    
 	    // OHR label and variable
 	    OHRDataBlock.mLabelY = mPosition1;
@@ -131,7 +137,10 @@ class HRDeltaView extends Ui.DataField {
 	    // Delta label and data
 	    DeltaDataBlock.mLabelY = mPosition3;
 	    DeltaDataBlock.mDataY = DeltaDataBlock.mLabelY + BORDER_PAD + vLayoutHeight - (mDataFontAscent / 2);
-	    
+	    // Percentage field
+	    PercentDataBlock.mLabelY = mPosition4;
+	    PercentDataBlock.mDataY = PercentDataBlock.mLabelY + BORDER_PAD + vLayoutHeight - (mDataFontAscent / 2);
+	    	    
 	    // Precalculate units as far as possible
 	    AuxDataBlock.mUnitsX = AuxDataBlock.mDataX + UNITS_SPACING;
 	    AuxDataBlock.mUnitsY = AuxDataBlock.mDataY + mDataFontAscent - Graphics.getFontAscent(mUnitsFont);
@@ -139,7 +148,8 @@ class HRDeltaView extends Ui.DataField {
 	    OHRDataBlock.mUnitsY = OHRDataBlock.mDataY + mDataFontAscent - Graphics.getFontAscent(mUnitsFont);
 	    DeltaDataBlock.mUnitsX = DeltaDataBlock.mDataX + UNITS_SPACING;
 	    DeltaDataBlock.mUnitsY = DeltaDataBlock.mDataY + mDataFontAscent - Graphics.getFontAscent(mUnitsFont);
-      
+      	PercentDataBlock.mUnitsX = PercentDataBlock.mDataX + UNITS_SPACING;
+	    PercentDataBlock.mUnitsY = PercentDataBlock.mDataY + mDataFontAscent - Graphics.getFontAscent(mUnitsFont);
         // Do not use a separator line for vertical layout
         separator = null;
 
@@ -152,7 +162,7 @@ class HRDeltaView extends Ui.DataField {
     }
 
     function selectFont(dc, width, height) {
-        var testString = "88.88"; //Dummy string to test data width
+        var testString = "+100"; //Dummy string to test data width
         var fontIdx;
         var dimensions;
 
@@ -208,8 +218,8 @@ class HRDeltaView extends Ui.DataField {
         	mSensorFound = true;
         	mTicker =6;
         	mSensor.searching = false;
-        	mSensor.data.currentHeartRate = 70;
-        	mSensor.data.OHRHeartRate = 100;
+        	mSensor.data.currentHeartRate = 170;
+        	mSensor.data.OHRHeartRate = 70;
         	mSensor.data.OHRHeartRateDelta = mSensor.data.OHRHeartRate - mSensor.data.currentHeartRate ;
 
         }
@@ -280,14 +290,14 @@ class HRDeltaView extends Ui.DataField {
 	            dc.drawText(DeltaDataBlock.mUnitsX + (dc.getTextWidthInPixels(dOHRHeartRateDelta, mDataFont) / 2), DeltaDataBlock.mUnitsY, mUnitsFont, mUnitsString, Graphics.TEXT_JUSTIFY_LEFT);
 	            
 	            // add code to display % difference
-	            var mPercent;
-	            if (mSensor.data.currentHeartRate == 0) {
+	            dc.drawText(PercentDataBlock.mLabelX, PercentDataBlock.mLabelY, mLabelFont, PercentDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_CENTER);
+	            
+	            var mPercent = 0;
+	            if (mSensor.data.currentHeartRate != 0) {
 	            	// avoid divide by zero
-	            	mPercent = 0;
-	            } else {
-	            	mPercent = (mSensor.data.OHRHeartRateDelta / mSensor.data.currentHeartRate) * 100;
-	            	if (DEBUGGING == true) { System.println("mPercent " + mPercent);}
+	               	mPercent = (mSensor.data.OHRHeartRateDelta.toNumber().toFloat() / mSensor.data.currentHeartRate.toNumber().toFloat()) * 100;
 	            }
+	            if (DEBUGGING == true) { System.println("mPercent " + mPercent);}
 	            
 	            var mCalcPercent;
 	            if (mSensor.data.OHRHeartRateDelta == 0) {
@@ -305,9 +315,9 @@ class HRDeltaView extends Ui.DataField {
 					System.println("calc percent " + mCalcPercent);
 					System.println("mPercent " + mPercent);
 				}
-				
-	            dc.drawText(DeltaDataBlock.mUnitsX + dc.getTextWidthInPixels(dOHRHeartRateDelta, mDataFont) + dc.getTextWidthInPixels(mUnitsString, mUnitsFont) +
-	            	BODGE, DeltaDataBlock.mDataY, mDataFont, mCalcPercent, Graphics.TEXT_JUSTIFY_LEFT);
+				          	
+	            dc.drawText(PercentDataBlock.mDataX, PercentDataBlock.mDataY, mDataFont, mCalcPercent, Graphics.TEXT_JUSTIFY_CENTER);
+	            	
 	            dc.setColor(fgColor, Graphics.COLOR_TRANSPARENT);
 	            	
 	            if (separator != null) {
