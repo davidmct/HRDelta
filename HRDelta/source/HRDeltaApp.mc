@@ -5,8 +5,8 @@ using Toybox.System as System;
 
 class HRDeltaApp extends App.AppBase {
 	
-	var mSensor;
-    var mAntID = 0;
+	var mSensor; 
+	var mAntID = 0;
 
     function initialize() {
         AppBase.initialize();
