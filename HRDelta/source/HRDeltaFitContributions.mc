@@ -46,6 +46,10 @@ class AuxHRFitContributor {
                 if (OHRRate != null) {
                 	sensor.data.OHRHeartRateDelta = OHRRate - heartRate;
                 	mDeltaHRField.setData( sensor.data.OHRHeartRateDelta.toNumber());
+                } else {
+                	// No OHR so hence no delta either!!
+                	sensor.data.OHRHeartRateDelta = 0;
+            		mDeltaHRField.setData( sensor.data.OHRHeartRateDelta.toNumber());
                 }
             } else {
             	sensor.data.OHRHeartRateDelta = 0;
