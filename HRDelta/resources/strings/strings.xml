@@ -1,6 +1,6 @@
 <strings>
     <string id="AppName">Heart Rate Delta</string>
-    <string id="AppVersion">0.2.2</string>
+    <string id="AppVersion">0.2.3</string>
     <string id="lHeartRateUnits">bpm</string>
     <string id="lAuxHRAntID">ANT+ ID of aux. HRM</string>
     <string id="lAuxHRAntIDPrompt">Enter 0 to search for any HRM</string>
@@ -9,5 +9,5 @@
     <string id="lDeltaHeartRate">Delta HR</string> 
     <string id="lDeltaPercent">D / S %</string>   
     <string id="lCurrentHeartRateChartTitle">ANT+ Strap Heart Rate</string>
-    <string id="lDeltaHeartRateChartTitle">OHR - strap (delta) Heart Rate</string>
+    <string id="lDeltaHeartRateChartTitle">OHR - Strap (delta) Heart Rate</string>
 </strings>

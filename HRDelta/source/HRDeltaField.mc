@@ -62,6 +62,7 @@ class HRDeltaView extends Ui.DataField {
     function initialize(sensor) {
         DataField.initialize();
         mSensor = sensor;
+        mSensorFound = false;
         mFitContributor = new AuxHRFitContributor(self);
 
     }
@@ -196,7 +197,8 @@ class HRDeltaView extends Ui.DataField {
         }
     
     	// push data to fit file and calc delta
-        mFitContributor.compute(mSensor);
+    	// Only write delta and AUX if sensor is found
+        mFitContributor.compute(mSensor, mSensorFound);
    }
  
 	// Display the value you computed here. This will be called

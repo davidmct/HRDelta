@@ -32,11 +32,12 @@ class AuxHRFitContributor {
 
     }
 
-    function compute(sensor) {
+    function compute(sensor, mSensorFound) {
         if( sensor != null ) {
             var heartRate = sensor.data.currentHeartRate;
 
-            if (heartRate != null) {
+			// we have a sensor and a heart rate
+            if ((heartRate != null) && mSensorFound)  {
                 mAuxHRField.setData( heartRate.toNumber() );
                
                 // intialisation should have happened as we have a heartrate
@@ -46,7 +47,12 @@ class AuxHRFitContributor {
                 	sensor.data.OHRHeartRateDelta = OHRRate - heartRate;
                 	mDeltaHRField.setData( sensor.data.OHRHeartRateDelta.toNumber());
                 }
+            } else {
+            	sensor.data.OHRHeartRateDelta = 0;
+            	mDeltaHRField.setData( sensor.data.OHRHeartRateDelta.toNumber());
+            	mAuxHRField.setData( 0 );
             }
+            
             Sys.println( "OHR " + sensor.data.OHRHeartRate);
             Sys.println( "Strap HR " + heartRate);
             Sys.println( "Delta HR " + sensor.data.OHRHeartRateDelta);
