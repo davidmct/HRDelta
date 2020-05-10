@@ -80,7 +80,7 @@ class HRDeltaView extends Ui.DataField {
         xCenter = width / 2;
         yCenter = height / 2;
 
-		System.println( "Layout started");
+		//System.println( "Layout started");
 		
 	    AuxDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lAuxHeartRate);
 	    OHRDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lOHRHeartRate);
@@ -159,10 +159,10 @@ class HRDeltaView extends Ui.DataField {
         // Do not use a separator line for vertical layout
         separator = null;
 
-        System.println( "width " + vLayoutWidth);
-        System.println( "height "+ vLayoutHeight);
-        System.println( "Font "+ vLayoutFontIdx);
-        System.println("Field layout done");
+        //System.println( "width " + vLayoutWidth);
+        //System.println( "height "+ vLayoutHeight);
+        //System.println( "Font "+ vLayoutFontIdx);
+        //System.println("Field layout done");
     }
 
     function selectFont(dc, string, width, height) {
@@ -339,7 +339,7 @@ class HRDeltaView extends Ui.DataField {
 	    }
         // Call parent's onUpdate(dc) to redraw the layout ONLY if using layouts!
         //View.onUpdate(dc);
- 		System.println("redraw field complete");
+ 		//System.println("redraw field complete");
     }
     
     function onTimerStart() {
