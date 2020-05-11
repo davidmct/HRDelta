@@ -8,10 +8,12 @@ const BORDER_PAD = 4;
 const UNITS_SPACING = 2;
 const TOP_PAD = 30;
 
-const DEBUGGING = false;
+const DEBUGGING = false;  // skip ANT search
+const DEBUGGING2 = false; // HR data output
 
-var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE,
-             Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
+var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE ];
+
+//             Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
 
 class DataViewBlock {
     var mLabelString;
@@ -159,10 +161,12 @@ class HRDeltaView extends Ui.DataField {
         // Do not use a separator line for vertical layout
         separator = null;
 
-        //System.println( "width " + vLayoutWidth);
-        //System.println( "height "+ vLayoutHeight);
-        //System.println( "Font "+ vLayoutFontIdx);
-        //System.println("Field layout done");
+		//if (DEBUGGING == true) {
+        	System.println( "width " + vLayoutWidth);
+        	System.println( "height "+ vLayoutHeight);
+        	System.println( "Font "+ vLayoutFontIdx);
+        	System.println("Field layout done");
+        //}
     }
 
     function selectFont(dc, string, width, height) {
@@ -212,7 +216,7 @@ class HRDeltaView extends Ui.DataField {
             fgColor = Graphics.COLOR_BLACK;
         }
 
-        System.println("onUpdate Field started");
+        //System.println("onUpdate Field started");
         dc.setColor(Graphics.COLOR_TRANSPARENT, bgColor);
         dc.clear();
 
@@ -250,7 +254,7 @@ class HRDeltaView extends Ui.DataField {
                 dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Found " + auxHRAntID, Graphics.TEXT_JUSTIFY_CENTER);
             } else {
             	// need to draw all data elements
-            	System.println("Entered text draw of field");
+            	//System.println("Entered text draw of field");
 
 	            var dAuxHeartRate;
 	            if  (mSensor.data.currentHeartRate == null) {
@@ -306,7 +310,8 @@ class HRDeltaView extends Ui.DataField {
 	            	// avoid divide by zero
 	               	mPercent = (mSensor.data.OHRHeartRateDelta.toNumber().toFloat() / mSensor.data.currentHeartRate.toNumber().toFloat()) * 100;
 	            }
-	            if (DEBUGGING == true) { System.println("mPercent " + mPercent);}
+	            
+	            //if (DEBUGGING2 == true) { System.println("mPercent " + mPercent);}
 	            
 	            var mCalcPercent;
 	            if (mSensor.data.OHRHeartRateDelta == 0) {
@@ -320,7 +325,8 @@ class HRDeltaView extends Ui.DataField {
 	            	// clean up display of wacky values
 	            	mCalcPercent = ( mPercent > 100 ? " >100%" : mCalcPercent); 	            
 				}
-				if (DEBUGGING == true) {
+				
+				if (DEBUGGING2 == true) {
 					System.println("Delta " + mSensor.data.OHRHeartRateDelta);
 					System.println("Current " + mSensor.data.currentHeartRate);
 					System.println("calc percent " + mCalcPercent);
