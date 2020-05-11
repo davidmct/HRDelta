@@ -166,6 +166,11 @@ class HRDeltaView extends Ui.DataField {
         	System.println( "height "+ vLayoutHeight);
         	System.println( "Font "+ vLayoutFontIdx);
         	System.println("Field layout done");
+        	
+        	System.println("AuxDataBlock = "+AuxDataBlock.mLabelX+","+AuxDataBlock.mLabelY+","+AuxDataBlock.mDataX+","+AuxDataBlock.mDataY+","+AuxDataBlock.mUnitsX+","+AuxDataBlock.mUnitsY );
+    		System.println("OHRDataBlock = "+OHRDataBlock.mLabelX+","+OHRDataBlock.mLabelY+","+OHRDataBlock.mDataX+","+OHRDataBlock.mDataY+","+OHRDataBlock.mUnitsX+","+OHRDataBlock.mUnitsY );
+    		System.println("DeltaDataBlock = "+DeltaDataBlock.mLabelX+","+DeltaDataBlock.mLabelY+","+DeltaDataBlock.mDataX+","+DeltaDataBlock.mDataY+","+DeltaDataBlock.mUnitsX+","+DeltaDataBlock.mUnitsY );
+    		System.println("PercentDataBlock = "+PercentDataBlock.mLabelX+","+PercentDataBlock.mLabelY+","+PercentDataBlock.mDataX+","+PercentDataBlock.mDataY+","+PercentDataBlock.mUnitsX+","+PercentDataBlock.mUnitsY );
         //}
     }
 
