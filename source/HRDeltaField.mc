@@ -11,9 +11,9 @@ const TOP_PAD = 30;
 const DEBUGGING = false;  // skip ANT search
 const DEBUGGING2 = false; // HR data output
 
-var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE ];
+var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE];
 
-//             Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
+//            Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
 
 class DataViewBlock {
     var mLabelString;
@@ -161,7 +161,7 @@ class HRDeltaView extends Ui.DataField {
         // Do not use a separator line for vertical layout
         separator = null;
 
-		//if (DEBUGGING == true) {
+		if (DEBUGGING == true) {
         	System.println( "width " + vLayoutWidth);
         	System.println( "height "+ vLayoutHeight);
         	System.println( "Font "+ vLayoutFontIdx);
@@ -171,7 +171,7 @@ class HRDeltaView extends Ui.DataField {
     		System.println("OHRDataBlock = "+OHRDataBlock.mLabelX+","+OHRDataBlock.mLabelY+","+OHRDataBlock.mDataX+","+OHRDataBlock.mDataY+","+OHRDataBlock.mUnitsX+","+OHRDataBlock.mUnitsY );
     		System.println("DeltaDataBlock = "+DeltaDataBlock.mLabelX+","+DeltaDataBlock.mLabelY+","+DeltaDataBlock.mDataX+","+DeltaDataBlock.mDataY+","+DeltaDataBlock.mUnitsX+","+DeltaDataBlock.mUnitsY );
     		System.println("PercentDataBlock = "+PercentDataBlock.mLabelX+","+PercentDataBlock.mLabelY+","+PercentDataBlock.mDataX+","+PercentDataBlock.mDataY+","+PercentDataBlock.mUnitsX+","+PercentDataBlock.mUnitsY );
-        //}
+        }
     }
 
     function selectFont(dc, string, width, height) {
