@@ -265,7 +265,7 @@ class HRDeltaView extends Ui.DataField {
 	            	dAuxHeartRate = "--";
 	            } else {
 	            	if (mSensor.data.currentHeartRate == 0) {
-	            		dAuxHeartRate = "0";
+	            		dAuxHeartRate = "--";
 	            	} else{
 	            		dAuxHeartRate = mSensor.data.currentHeartRate.format("%.0u");
 	            	}
@@ -287,7 +287,7 @@ class HRDeltaView extends Ui.DataField {
 	            	dOHRHeartRate = "--";
 	            } else {
 	            	if (mSensor.data.OHRHeartRate == 0) {
-	            		dOHRHeartRate = "0";
+	            		dOHRHeartRate = "--";
 	            	} else {	
 	            		dOHRHeartRate = mSensor.data.OHRHeartRate.format("%.0u");
 	            	}
