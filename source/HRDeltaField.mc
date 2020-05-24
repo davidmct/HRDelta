@@ -10,6 +10,7 @@ const TOP_PAD = 30;
 
 const DEBUGGING = false;  // skip ANT search
 const DEBUGGING2 = false; // HR data output
+const mDebuggingANT  = true;
 
 var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE];
 //           Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];

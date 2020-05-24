@@ -3,6 +3,12 @@ using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Graphics;
 using Toybox.System as System;
 
+
+//0.2.7 
+// Look at adding check that ANT payload is at least 2 long
+// Maybe update to HRV version of code
+
+
 class HRDeltaApp extends App.AppBase {
 	
 	var mSensor; 

@@ -1,3 +1,16 @@
 project.manifest = manifest.xml
+# default directories for these..
+srcBase=source
+resBase=resources
+
+# setup base as fenix6xpro
+# base.sourcePath=$(fenix6xpro.sourcePath) fails with base qualifier property cannot be evaluated.
+base.sourcePath=$(srcBase)
+base.resourcePath=$(resBase)
+
+# we can have multi excludes in code as (:label1 :label2)
+# need to include base so default compile works
+# :previousAntHandler was in pre 0.2.7 releases
+base.excludeAnnotations = $(base.excludeAnnotations);Post_0_2_7_AntHandler
 
 
