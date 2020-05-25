@@ -18,6 +18,7 @@ class HRDeltaApp extends App.AppBase {
         AppBase.initialize();
         var mApp = Application.getApp();
         mAntID = mApp.getProperty("pAuxHRAntID");
+        System.println("STARTED");
     }
 
     // onStart() is called on application start up

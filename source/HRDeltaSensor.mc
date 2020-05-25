@@ -6,6 +6,7 @@
 
 using Toybox.Ant as Ant;
 using Toybox.Time as Time;
+using Toybox.System as Sys;
 
 (:previousAntHandler)
 class AuxHRSensor extends Ant.GenericChannel {
@@ -15,7 +16,7 @@ class AuxHRSensor extends Ant.GenericChannel {
     hidden var chanAssign;
 
     var data;
-    var searching;
+    var mSearching;
     var deviceCfg;
 
     class AuxHRData {
@@ -61,7 +62,7 @@ class AuxHRSensor extends Ant.GenericChannel {
         GenericChannel.setDeviceConfig(deviceCfg);
 
         data = new AuxHRData();
-        searching = true;
+        mSearching = true;
     }
 
     function open() {
@@ -69,7 +70,7 @@ class AuxHRSensor extends Ant.GenericChannel {
         GenericChannel.open();
 
         data = new AuxHRData();
-        searching = true;
+        mSearching = true;
     }
 
     function closeSensor() {
@@ -82,8 +83,8 @@ class AuxHRSensor extends Ant.GenericChannel {
 
         if( Ant.MSG_ID_BROADCAST_DATA == msg.messageId ) {
             // Were we searching?
-            if (searching) {
-                searching = false;
+            if (mSearching) {
+                mSearching = false;
                 // Update our device configuration primarily to see the device number of the sensor we paired to
                 deviceCfg = GenericChannel.getDeviceConfig();
             }
@@ -95,7 +96,7 @@ class AuxHRSensor extends Ant.GenericChannel {
                     // Channel closed, re-open
                     open();
                 } else if( Ant.MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH  == (payload[1] & 0xFF) ) {
-                    searching = true;
+                    mSearching = true;
                 }
             } else {
                 //It is a channel response.
@@ -126,19 +127,30 @@ class AuxHRSensor extends Ant.GenericChannel {
     }
 	
 	hidden var mChanAssign;
-	hidden var deviceCfg;
+	var deviceCfg;
 	hidden var mMessageCount=0;
 	hidden var mSavedAntID;
 	hidden var isChOpen;
 	
     function initialize(mAntID) {
     	mSavedAntID = mAntID;
-    	 
-        // Get the channel
-        mChanAssign = new Ant.ChannelAssignment(
-            //Ant.CHANNEL_TYPE_RX_NOT_TX,
-            Ant.CHANNEL_TYPE_RX_ONLY,
-            Ant.NETWORK_PLUS);
+
+       // Get the channel
+        try {
+	        mChanAssign = new Ant.ChannelAssignment(
+	            //Ant.CHANNEL_TYPE_RX_NOT_TX,
+	            Ant.CHANNEL_TYPE_RX_ONLY,
+	            Ant.NETWORK_PLUS);
+		} catch (ex) {
+			Sys.println("Can't assign ANT channel");
+			Sys.println(ex.getErrorMessage());
+			closeSensor();	
+	        mChanAssign = new Ant.ChannelAssignment(
+	            Ant.CHANNEL_TYPE_RX_ONLY,
+	            Ant.NETWORK_PLUS);			
+		}
+		finally {
+		}
             		
         // Set the configuration
         deviceCfg = new Ant.DeviceConfig( {
@@ -162,7 +174,7 @@ class AuxHRSensor extends Ant.GenericChannel {
 		Sys.println("ANT initialised");
 	}	
 
-	function stopExtSensor() {
+	function closeSensor() {
 		Sys.println("Stopping external sensors");
 		if (isChOpen ) {
     		GenericChannel.close();
@@ -188,6 +200,8 @@ class AuxHRSensor extends Ant.GenericChannel {
                 mSearching = false;
                 // Update our device configuration primarily to see the device number of the sensor we paired to
                 deviceCfg = GenericChannel.getDeviceConfig();
+                mSavedAntID = deviceCfg.deviceNumber;
+                Sys.println("ANT: ANT ID = "+mSavedAntID);
             }
 			// not sure this handles all page types and 65th special page correctly
     		
@@ -197,35 +211,42 @@ class AuxHRSensor extends Ant.GenericChannel {
         }
         else if( Ant.MSG_ID_CHANNEL_RESPONSE_EVENT == msg.messageId ) {
         	if (mDebuggingANT) {
-        		//Sys.println("ANT EVENT msg");
+        		Sys.println("ANT EVENT msg of length "+payload.size());
         	}
-       		if (Ant.MSG_ID_RF_EVENT == (payload[0] & 0xFF)) {
+        	// catch case when payload is only one byte!
+       		if ((Ant.MSG_ID_RF_EVENT == (payload[0] & 0xFF)) && (payload.size() > 1)) {
 	            var event = (payload[1] & 0xFF);	            
 	            switch( event) {
 	            	case Ant.MSG_CODE_EVENT_CHANNEL_CLOSED:
 	            		Sys.println("ANT:EVENT: closed");
 	            		// initialise again
-	            		initialize(mSavedAntID);
-						data.currentHeartRate = 0;
-						mSearching = true;	            			            		
+	            		//deviceCfg = null;
+	            		//initialize(mSavedAntID);
+	            		// reopen channel
+	            		isChOpen = GenericChannel.open();
+						//data.currentHeartRate = 0;
+						// should still get data
+						//mSearching = true;	            			            		
 	            		break;
 	            	case Ant.MSG_CODE_EVENT_RX_FAIL:
-						data.currentHeartRate = 0;
-						mSearching = true;
+						//data.currentHeartRate = 0;
+						//mSearching = true;
 						// wait for another message?
 						Sys.println( "RX_FAIL in AntHandler");
 						break;
 					case Ant.MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH:
 						Sys.println( "ANT:RX_FAIL, search/wait");
 						// wait for more messages
+						//data.currentHeartRate = 0;
 						mSearching = true;	
 						break;
 					case Ant.MSG_CODE_EVENT_RX_SEARCH_TIMEOUT:
 						Sys.println( "ANT: EVENT SEARCH TIMEOUT");
-						stopExtSensor();
-	            		initialize(mSavedAntID);
-						data.currentHeartRate = 0;
-						mSearching = true;	            			            		
+						//closeSensor();
+						//deviceCfg = null;
+	            		//initialize(mSavedAntID);
+						//data.currentHeartRate = 0;
+						//mSearching = true;	            			            		
 						break;
 	            	default:
 	            		// channel response

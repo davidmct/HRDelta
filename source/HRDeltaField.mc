@@ -231,7 +231,7 @@ class HRDeltaView extends Ui.DataField {
         if (DEBUGGING) {
         	mSensorFound = true;
         	mTicker =6;
-        	mSensor.searching = false;
+        	mSensor.mSearching = false;
         	mSensor.data.currentHeartRate = 110;
         	mSensor.data.OHRHeartRate = 100;
         	mSensor.data.OHRHeartRateDelta = mSensor.data.OHRHeartRate - mSensor.data.currentHeartRate ;
@@ -243,7 +243,7 @@ class HRDeltaView extends Ui.DataField {
             dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "No Channel!", Graphics.TEXT_JUSTIFY_CENTER);
             mSensorFound = false;
             System.println("state msensor null");
-        } else if (true == mSensor.searching) {
+        } else if (true == mSensor.mSearching) {
             dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Searching...", Graphics.TEXT_JUSTIFY_CENTER);
             mSensorFound = false;
             System.println("state searching");
