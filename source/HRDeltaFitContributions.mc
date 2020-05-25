@@ -13,7 +13,7 @@ const DELTA_HR_FIELD_ID  = 1;
 
 class AuxHRFitContributor {
 
-    hidden var mTimerRunning        = false;
+    hidden var mTimerRunning = false;
 
     // OHR is recorded already in the FIT file so just need Aux and Difference
     // Difference could come by post processing but for fun added in
@@ -32,12 +32,12 @@ class AuxHRFitContributor {
 
     }
 
-    function compute(sensor, mSensorFound) {
+    function compute(sensor, mSensorFoundX) {
         if( sensor != null ) {
             var heartRate = sensor.data.currentHeartRate;
 
 			// we have a sensor and a heart rate
-            if ((heartRate != null) && mSensorFound)  {
+            if ((heartRate != null) && mSensorFoundX)  {
                 mAuxHRField.setData( heartRate.toNumber() );
                
                 // intialisation should have happened as we have a heartrate

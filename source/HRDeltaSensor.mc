@@ -70,7 +70,7 @@ class AuxHRSensor extends Ant.GenericChannel {
         GenericChannel.open();
 
         data = new AuxHRData();
-        mSearching = true;
+        //mSearching = true;
     }
 
     function closeSensor() {
@@ -152,7 +152,8 @@ class AuxHRSensor extends Ant.GenericChannel {
 		}
 		finally {
 		}
-            		
+        GenericChannel.initialize(method(:onAntMsg), mChanAssign);
+         	          		
         // Set the configuration
         deviceCfg = new Ant.DeviceConfig( {
             :deviceNumber => mAntID,             //Set to 0 to use wildcard search
@@ -164,7 +165,7 @@ class AuxHRSensor extends Ant.GenericChannel {
             //:searchTimeoutHighPriority => 2, 
             :searchThreshold => 0} );           //Pair to all transmitting sensors, 0 disabled, 1 = nearest
        	//mChanAssign.setBackgroundScan(true);
-       	GenericChannel.initialize(method(:onAntMsg), mChanAssign);
+
        	GenericChannel.setDeviceConfig(deviceCfg);
        	//isChOpen = GenericChannel.open();
        	
@@ -209,15 +210,13 @@ class AuxHRSensor extends Ant.GenericChannel {
                 // Update our device configuration primarily to see the device number of the sensor we paired to
                 deviceCfg = GenericChannel.getDeviceConfig();
                 //mSavedAntID = deviceCfg.deviceNumber;
-                //Sys.println("ANT: ANT ID = "+mSavedAntID);
+                Sys.println("ANT: ANT ID = "+deviceCfg.deviceNumber);
             }
 			// not sure this handles all page types and 65th special page correctly
     		
     		data.currentHeartRate = payload[7].toNumber();
-			//var beatEvent = ((payload[4] | (payload[5] << 8)).toNumber() * 1000) / 1024;
-			//var beatCount = payload[6].toNumber();
-        }
-        else if( Ant.MSG_ID_CHANNEL_RESPONSE_EVENT == msg.messageId ) {
+
+        } else if( Ant.MSG_ID_CHANNEL_RESPONSE_EVENT == msg.messageId ) {
         	if (mDebuggingANT) {
         		Sys.println("ANT EVENT msg of length "+payload.size());
         	}
