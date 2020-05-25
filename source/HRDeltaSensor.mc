@@ -134,6 +134,7 @@ class AuxHRSensor extends Ant.GenericChannel {
 	
     function initialize(mAntID) {
     	mSavedAntID = mAntID;
+    	isChOpen = false;
 
        // Get the channel
         try {
@@ -165,7 +166,7 @@ class AuxHRSensor extends Ant.GenericChannel {
        	//mChanAssign.setBackgroundScan(true);
        	GenericChannel.initialize(method(:onAntMsg), mChanAssign);
        	GenericChannel.setDeviceConfig(deviceCfg);
-       	isChOpen = GenericChannel.open();
+       	//isChOpen = GenericChannel.open();
        	
        	data = new AuxHRData();
         mSearching = true;
@@ -173,6 +174,13 @@ class AuxHRSensor extends Ant.GenericChannel {
 		// will now be searching for strap after openCh()
 		Sys.println("ANT initialised");
 	}	
+	
+	function open() {
+        // Open the channel
+        isChOpen = GenericChannel.open();
+        //data = new AuxHRData();
+        mSearching = true;
+    }
 
 	function closeSensor() {
 		Sys.println("Stopping external sensors");
@@ -200,8 +208,8 @@ class AuxHRSensor extends Ant.GenericChannel {
                 mSearching = false;
                 // Update our device configuration primarily to see the device number of the sensor we paired to
                 deviceCfg = GenericChannel.getDeviceConfig();
-                mSavedAntID = deviceCfg.deviceNumber;
-                Sys.println("ANT: ANT ID = "+mSavedAntID);
+                //mSavedAntID = deviceCfg.deviceNumber;
+                //Sys.println("ANT: ANT ID = "+mSavedAntID);
             }
 			// not sure this handles all page types and 65th special page correctly
     		
@@ -223,7 +231,7 @@ class AuxHRSensor extends Ant.GenericChannel {
 	            		//deviceCfg = null;
 	            		//initialize(mSavedAntID);
 	            		// reopen channel
-	            		isChOpen = GenericChannel.open();
+	            		open();
 						//data.currentHeartRate = 0;
 						// should still get data
 						//mSearching = true;	            			            		

@@ -10,7 +10,7 @@ const TOP_PAD = 30;
 
 const DEBUGGING = false;  // skip ANT search
 const DEBUGGING2 = false; // HR data output
-const mDebuggingANT  = true;
+const mDebuggingANT  = false;
 
 var fonts = [Graphics.FONT_XTINY,Graphics.FONT_TINY,Graphics.FONT_SMALL,Graphics.FONT_MEDIUM,Graphics.FONT_LARGE];
 //           Graphics.FONT_NUMBER_MILD,Graphics.FONT_NUMBER_MEDIUM,Graphics.FONT_NUMBER_HOT,Graphics.FONT_NUMBER_THAI_HOT];
@@ -57,13 +57,13 @@ class HRDeltaView extends Ui.DataField {
     hidden var yCenter;
     
     hidden var mFitContributor;
-    hidden var mSensor;
+    //hidden var $._mApp.mAntSensor;
     hidden var mSensorFound = false;
     hidden var mTicker = 0;
 
-    function initialize(sensor) {
+    function initialize() {
         DataField.initialize();
-        mSensor = sensor;
+        //$._mApp.mAntSensor = sensor;
         mSensorFound = false;
         mFitContributor = new AuxHRFitContributor(self);
 
@@ -199,15 +199,15 @@ class HRDeltaView extends Ui.DataField {
         // See Activity.Info in the documentation for available information.
         if(info has :currentHeartRate){
             if(info.currentHeartRate != null){
-                mSensor.data.OHRHeartRate = info.currentHeartRate;
+                $._mApp.mAntSensor.data.OHRHeartRate = info.currentHeartRate;
             } else {
-                mSensor.data.OHRHeartRate = null;
+                $._mApp.mAntSensor.data.OHRHeartRate = null;
             }
         }
     
     	// push data to fit file and calc delta
     	// Only write delta and AUX if sensor is found
-        mFitContributor.compute(mSensor, mSensorFound);
+        mFitContributor.compute($._mApp.mAntSensor, mSensorFound);
    }
  
 	// Display the value you computed here. This will be called
@@ -231,19 +231,19 @@ class HRDeltaView extends Ui.DataField {
         if (DEBUGGING) {
         	mSensorFound = true;
         	mTicker =6;
-        	mSensor.mSearching = false;
-        	mSensor.data.currentHeartRate = 110;
-        	mSensor.data.OHRHeartRate = 100;
-        	mSensor.data.OHRHeartRateDelta = mSensor.data.OHRHeartRate - mSensor.data.currentHeartRate ;
+        	$._mApp.mAntSensor.mSearching = false;
+        	$._mApp.mAntSensor.data.currentHeartRate = 110;
+        	$._mApp.mAntSensor.data.OHRHeartRate = 100;
+        	$._mApp.mAntSensor.data.OHRHeartRateDelta = $._mApp.mAntSensor.data.OHRHeartRate - $._mApp.mAntSensor.data.currentHeartRate ;
 
         }
 
         // Update status
-        if (mSensor == null) {
+        if ($._mApp.mAntSensor == null) {
             dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "No Channel!", Graphics.TEXT_JUSTIFY_CENTER);
             mSensorFound = false;
-            System.println("state msensor null");
-        } else if (true == mSensor.mSearching) {
+            System.println("state $._mApp.mAntSensor null");
+        } else if (true == $._mApp.mAntSensor.mSearching) {
             dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Searching...", Graphics.TEXT_JUSTIFY_CENTER);
             mSensorFound = false;
             System.println("state searching");
@@ -254,7 +254,7 @@ class HRDeltaView extends Ui.DataField {
             }
             
             if (mSensorFound && mTicker < 5) {
-                var auxHRAntID = mSensor.deviceCfg.deviceNumber;
+                var auxHRAntID = $._mApp.mAntSensor.deviceCfg.deviceNumber;
                 mTicker++;
                 dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Found " + auxHRAntID, Graphics.TEXT_JUSTIFY_CENTER);
             } else {
@@ -262,35 +262,35 @@ class HRDeltaView extends Ui.DataField {
             	//System.println("Entered text draw of field");
 
 	            var dAuxHeartRate;
-	            if  (mSensor.data.currentHeartRate == null) {
+	            if  ($._mApp.mAntSensor.data.currentHeartRate == null) {
 	            	dAuxHeartRate = "--";
 	            } else {
-	            	if (mSensor.data.currentHeartRate == 0) {
+	            	if ($._mApp.mAntSensor.data.currentHeartRate == 0) {
 	            		dAuxHeartRate = "--";
 	            	} else{
-	            		dAuxHeartRate = mSensor.data.currentHeartRate.format("%.0u");
+	            		dAuxHeartRate = $._mApp.mAntSensor.data.currentHeartRate.format("%.0u");
 	            	}
 	            }
         		
         		var dOHRHeartRateDelta; 
-        		if  (mSensor.data.OHRHeartRateDelta == null) {
+        		if  ($._mApp.mAntSensor.data.OHRHeartRateDelta == null) {
 	            	dOHRHeartRateDelta = "--";
 	            } else {
-		            if  (mSensor.data.OHRHeartRateDelta == 0) {
+		            if  ($._mApp.mAntSensor.data.OHRHeartRateDelta == 0) {
 		            	dOHRHeartRateDelta = "0";
 		            } else {
-		            	dOHRHeartRateDelta = mSensor.data.OHRHeartRateDelta.format("%+.0i");
+		            	dOHRHeartRateDelta = $._mApp.mAntSensor.data.OHRHeartRateDelta.format("%+.0i");
 		            }
         		}
         		
         		var dOHRHeartRate; 
-				if  (mSensor.data.OHRHeartRate == null) {
+				if  ($._mApp.mAntSensor.data.OHRHeartRate == null) {
 	            	dOHRHeartRate = "--";
 	            } else {
-	            	if (mSensor.data.OHRHeartRate == 0) {
+	            	if ($._mApp.mAntSensor.data.OHRHeartRate == 0) {
 	            		dOHRHeartRate = "--";
 	            	} else {	
-	            		dOHRHeartRate = mSensor.data.OHRHeartRate.format("%.0u");
+	            		dOHRHeartRate = $._mApp.mAntSensor.data.OHRHeartRate.format("%.0u");
 	            	}
 	            }
 				
@@ -311,15 +311,15 @@ class HRDeltaView extends Ui.DataField {
 	            dc.drawText(PercentDataBlock.mLabelX, PercentDataBlock.mLabelY, mLabelFont, PercentDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_LEFT);
 	            
 	            var mPercent = 0;
-	            if (mSensor.data.currentHeartRate != 0) {
+	            if ($._mApp.mAntSensor.data.currentHeartRate != 0) {
 	            	// avoid divide by zero
-	               	mPercent = (mSensor.data.OHRHeartRateDelta.toNumber().toFloat() / mSensor.data.currentHeartRate.toNumber().toFloat()) * 100;
+	               	mPercent = ($._mApp.mAntSensor.data.OHRHeartRateDelta.toNumber().toFloat() / $._mApp.mAntSensor.data.currentHeartRate.toNumber().toFloat()) * 100;
 	            }
 	            
 	            //if (DEBUGGING2 == true) { System.println("mPercent " + mPercent);}
 	            
 	            var mCalcPercent;
-	            if (mSensor.data.OHRHeartRateDelta == 0) {
+	            if ($._mApp.mAntSensor.data.OHRHeartRateDelta == 0) {
 	            	// green OK
 	            	dc.setColor( Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
 	            	mCalcPercent = "0%";
@@ -332,8 +332,8 @@ class HRDeltaView extends Ui.DataField {
 				}
 				
 				if (DEBUGGING2 == true) {
-					System.println("Delta " + mSensor.data.OHRHeartRateDelta);
-					System.println("Current " + mSensor.data.currentHeartRate);
+					System.println("Delta " + $._mApp.mAntSensor.data.OHRHeartRateDelta);
+					System.println("Current " + $._mApp.mAntSensor.data.currentHeartRate);
 					System.println("calc percent " + mCalcPercent);
 					System.println("mPercent " + mPercent);
 				}

@@ -7,17 +7,20 @@ using Toybox.System as System;
 //0.2.7 
 // Look at adding check that ANT payload is at least 2 long
 // Maybe update to HRV version of code
+//0.2.8
+// updated ANT code again
 
+var _mApp;
 
 class HRDeltaApp extends App.AppBase {
 	
-	var mSensor; 
+	var mAntSensor; 
 	var mAntID = 0;
 
     function initialize() {
         AppBase.initialize();
-        var mApp = Application.getApp();
-        mAntID = mApp.getProperty("pAuxHRAntID");
+        $._mApp = Application.getApp();
+        mAntID = $._mApp.getProperty("pAuxHRAntID");
         System.println("STARTED");
     }
 
@@ -25,24 +28,24 @@ class HRDeltaApp extends App.AppBase {
     function onStart(state) {
     	try {
             //Create the sensor object and open it
-            mSensor = new AuxHRSensor(mAntID);
-            mSensor.open();
+            mAntSensor = new AuxHRSensor(mAntID);
+            mAntSensor.open();
         } catch(e instanceof Ant.UnableToAcquireChannelException) {
             System.println(e.getErrorMessage());
-            mSensor = null;
+            mAntSensor = null;
         }
     }
 
     // onStop() is called when your application is exiting
     function onStop(state) {
-    	mSensor.closeSensor();
+    	mAntSensor.closeSensor();
     	return false;
     }
 
    
     //! Return the initial view of your application here
     function getInitialView() {
-        return [ new HRDeltaView(mSensor) ];
+        return [ new HRDeltaView() ];
     }
 
 }
