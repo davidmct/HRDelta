@@ -12,6 +12,8 @@ base.resourcePath=$(resBase)
 # need to include base so default compile works
 # :previousAntHandler was in pre 0.2.7 releases
 # Post_0_2_7_AntHandler for post 
-base.excludeAnnotations = $(base.excludeAnnotations);previousAntHandler
+# post0_2_8Code
+# Ant0_2_8
+base.excludeAnnotations = $(base.excludeAnnotations);previousAntHandler;pre0_2_8Code;Post_0_2_7_AntHandler
 
 

@@ -269,3 +269,93 @@ class AuxHRSensor extends Ant.GenericChannel {
     	}
     }
  }
+ 
+ // use the widget version!!
+ (:Ant0_2_8)
+ class AuxHRSensor extends Ant.GenericChannel {
+    const DEVICE_TYPE = 120;
+    const PERIOD = 8070;
+
+    hidden var chanAssign;
+    hidden var isChOpen;
+    var mSearching;
+    var deviceCfg;
+
+    class HeartRateDataPage {
+        static const INVALID_HR = 0x00;
+
+        function parse(payload) {
+            $._mApp.currentHeartRate = parseCurrentHR(payload);
+        }
+
+        hidden function parseCurrentHR(payload) {
+            return payload[7];
+        }
+    }
+
+    function initialize(mAntID) {
+    	Sys.println("HRSensor initialise called with mAntID = "+mAntID);
+    	isChOpen = false;
+    	
+        // Get the channel
+        chanAssign = new Ant.ChannelAssignment(
+            Ant.CHANNEL_TYPE_RX_NOT_TX,
+            Ant.NETWORK_PLUS);
+        GenericChannel.initialize(method(:onMessage), chanAssign);
+
+        // Set the configuration
+        deviceCfg = new Ant.DeviceConfig( {
+            :deviceNumber => mAntID,             //Set to 0 to use wildcard search
+            :deviceType => DEVICE_TYPE,
+            :transmissionType => 0,
+            :messagePeriod => PERIOD,
+            :radioFrequency => 57,              //Ant+ Frequency
+            :searchTimeoutLowPriority => 10,    //Timeout in 25s
+            :searchThreshold => 0} );           //Pair to all transmitting sensors
+        GenericChannel.setDeviceConfig(deviceCfg);       
+        mSearching = true;
+    }
+
+    function open() {
+        // Open the channel
+        Sys.println("ANT open() ");
+        isChOpen = GenericChannel.open();
+        //searching = true;
+    }
+
+    function closeSensor() {
+    	Sys.println("ANT closeSensor()");
+    	if (isChOpen) {
+        	GenericChannel.close();
+        }
+        GenericChannel.release();
+    }
+
+    function onMessage(msg) {
+        // Parse the payload
+        var payload = msg.getPayload();
+
+        if( Ant.MSG_ID_BROADCAST_DATA == msg.messageId ) {
+            // Were we searching?
+            if (mSearching) {
+                mSearching = false;
+                // Update our device configuration primarily to see the device number of the sensor we paired to
+                deviceCfg = GenericChannel.getDeviceConfig();
+            }
+            var dp = new HeartRateDataPage();
+            dp.parse(msg.getPayload());
+        } else if(Ant.MSG_ID_CHANNEL_RESPONSE_EVENT == msg.messageId) {
+            if (Ant.MSG_ID_RF_EVENT == (payload[0] & 0xFF)) {
+                if (Ant.MSG_CODE_EVENT_CHANNEL_CLOSED == (payload[1] & 0xFF)) {
+                    // Channel closed, re-open
+                    open();
+                } else if( Ant.MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH  == (payload[1] & 0xFF) ) {
+                    mSearching = true;
+                }
+            } else {
+                //It is a channel response.
+            }
+        }
+    }
+
+}

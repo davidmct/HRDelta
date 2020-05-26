@@ -32,6 +32,7 @@ class AuxHRFitContributor {
 
     }
 
+(:pre0_2_8Code)
     function compute(sensor, mSensorFoundX) {
         if( sensor != null ) {
             var heartRate = sensor.data.currentHeartRate;
@@ -60,6 +61,36 @@ class AuxHRFitContributor {
             Sys.println( "OHR " + sensor.data.OHRHeartRate);
             Sys.println( "Strap HR " + heartRate);
             Sys.println( "Delta HR " + sensor.data.OHRHeartRateDelta);
+        }
+    }
+
+(:post0_2_8Code)    
+    function compute(sensor, mSensorFoundX) {
+        if( sensor != null ) {
+            var heartRate = $._mApp.currentHeartRate;
+
+			// we have a sensor and a heart rate
+            if ((heartRate != null) && mSensorFoundX)  {
+                mAuxHRField.setData( heartRate.toNumber() );
+               
+                // intialisation should have happened as we have a heartrate
+                // maybe simulator issue until you start faking data
+                var OHRRate = $._mApp.OHRHeartRate;
+                if (OHRRate != null) {
+                	$._mApp.OHRHeartRateDelta = OHRRate - heartRate;
+                	mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+                } else {
+                	// No OHR so hence no delta either!!
+                	$._mApp.OHRHeartRateDelta = 0;
+            		mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+                }
+            } else {
+            	$._mApp.OHRHeartRateDelta = 0;
+            	mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+            	mAuxHRField.setData( 0 );
+            }
+            
+            Sys.println( "OHR, Strap, Delta: " + $._mApp.OHRHeartRate, heartRate, $._mApp.OHRHeartRateDelta );
         }
     }
 

@@ -30,6 +30,11 @@ class DataViewBlock {
     }
 }
 
+var dAuxHeartRate = null;
+var dOHRHeartRateDelta = null;
+var dOHRHeartRate = null; 
+var mCalcPercent;
+
 class HRDeltaView extends Ui.DataField {
 
     // should get strings from rez file
@@ -60,13 +65,33 @@ class HRDeltaView extends Ui.DataField {
     //hidden var $._mApp.mAntSensor;
     hidden var mSensorFound = false;
     hidden var mTicker = 0;
+    hidden var mSensorMaster;
 
+(:pre0_2_8Code)
     function initialize() {
         DataField.initialize();
         //$._mApp.mAntSensor = sensor;
         mSensorFound = false;
         mFitContributor = new AuxHRFitContributor(self);
 
+    }
+   
+(:post0_2_8Code) 
+    function initialize() {
+        DataField.initialize();
+        mSensorFound = false;
+        
+        try {
+            //Create the sensor object and open it
+            System.println("HRSensor initialise being called with mAntID = "+$._mApp.mAntID);
+            $._mApp.mSensor = new AuxHRSensor($._mApp.mAntID);
+            $._mApp.mSensor.open();
+        } catch(e instanceof Ant.UnableToAcquireChannelException) {
+        	System.println(e.getErrorMessage());
+            $._mApp.mSensor = null;
+        }
+              
+        mTicker = 0;
     }
 
     // Set your layout here. Anytime the size of obscurity of
@@ -199,19 +224,29 @@ class HRDeltaView extends Ui.DataField {
         // See Activity.Info in the documentation for available information.
         if(info has :currentHeartRate){
             if(info.currentHeartRate != null){
-                $._mApp.mAntSensor.data.OHRHeartRate = info.currentHeartRate;
+                $._mApp.OHRHeartRate = info.currentHeartRate;
             } else {
-                $._mApp.mAntSensor.data.OHRHeartRate = null;
+                $._mApp.OHRHeartRate = null;
             }
         }
     
     	// push data to fit file and calc delta
     	// Only write delta and AUX if sensor is found
-        mFitContributor.compute($._mApp.mAntSensor, mSensorFound);
+    	System.println("mSensor, mSensorFound = "+$._mApp.mSensor+", "+mSensorFound);
+    	
+    	if ($._mApp.OHRHeartRate != null && $._mApp.currentHeartRate != null) {
+        	$._mApp.OHRHeartRateDelta = $._mApp.OHRHeartRate - $._mApp.currentHeartRate ;
+        }
+ 
+    	
+    	if (( mFitContributor != null) && ($._mApp.mSensor !=null)) {
+        	mFitContributor.compute($._mApp.mSensor, mSensorFound);
+        }
    }
  
 	// Display the value you computed here. This will be called
     // once a second when the data field is visible.
+(:pre0_2_8Code)
     function onUpdate(dc) {
     
         var bgColor = getBackgroundColor();
@@ -226,7 +261,7 @@ class HRDeltaView extends Ui.DataField {
         dc.clear();
 
         dc.setColor(fgColor, Graphics.COLOR_TRANSPARENT);
-        
+               
         // force debug
         if (DEBUGGING) {
         	mSensorFound = true;
@@ -352,29 +387,175 @@ class HRDeltaView extends Ui.DataField {
         //View.onUpdate(dc);
  		//System.println("redraw field complete");
     }
+
+(:post0_2_8Code)    
+    function onUpdate(dc) {
+    
+        var bgColor = getBackgroundColor();
+        var fgColor = Graphics.COLOR_WHITE;
+
+        if (bgColor == Graphics.COLOR_WHITE) {
+            fgColor = Graphics.COLOR_BLACK;
+        }
+
+        //System.println("onUpdate Field started");
+        dc.setColor(Graphics.COLOR_TRANSPARENT, bgColor);
+        dc.clear();
+
+        dc.setColor(fgColor, Graphics.COLOR_TRANSPARENT);
+        
+        // force debug
+        if (DEBUGGING) {
+        	mSensorFound = true;
+        	mTicker =6;
+        	$._mApp.mSearching = false;
+        	$._mApp.currentHeartRate = 110;
+        	$._mApp.OHRHeartRate = 100;
+        	$._mApp.OHRHeartRateDelta = $._mApp.OHRHeartRate - $._mApp.currentHeartRate ;
+
+        }
+
+        // Update status
+        if ($._mApp.mSensor == null) {
+            dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "No Channel!", Graphics.TEXT_JUSTIFY_CENTER);
+            mSensorFound = false;
+            System.println("state $._mApp.mAntSensor null");
+        } else if (true == $._mApp.mSensor.mSearching) {
+            dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Searching...", Graphics.TEXT_JUSTIFY_CENTER);
+            mSensorFound = false;
+            System.println("state searching");
+        } else {    
+        	if (!mSensorFound) {
+                mSensorFound = true;
+                mTicker = 0;
+            }
+            
+            if (mSensorFound && mTicker < 5) {
+                var auxHRAntID = $._mApp.mSensor.deviceCfg.deviceNumber;
+                mTicker++;
+                dc.drawText(xCenter, yCenter-50, Graphics.FONT_MEDIUM, "Found " + auxHRAntID, Graphics.TEXT_JUSTIFY_CENTER);
+            } else {
+            	// need to draw all data elements
+            	//System.println("Entered text draw of field");
+			
+				// colour is for %
+				var txtColour = createOutputStrings();
+				
+				// Now draw screen output
+	            //Draw 3 pairs of HR label, then value then units          
+	            dc.drawText(OHRDataBlock.mLabelX, OHRDataBlock.mLabelY, mLabelFont, OHRDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_LEFT);
+	            dc.drawText(OHRDataBlock.mDataX, OHRDataBlock.mDataY, mDataFont, dOHRHeartRate, Graphics.TEXT_JUSTIFY_CENTER);
+	            dc.drawText(OHRDataBlock.mUnitsX + (dc.getTextWidthInPixels(dOHRHeartRate, mDataFont) / 2), OHRDataBlock.mUnitsY, mUnitsFont, mUnitsString, Graphics.TEXT_JUSTIFY_LEFT);
+            
+	            dc.drawText(AuxDataBlock.mLabelX, AuxDataBlock.mLabelY, mLabelFont, AuxDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_LEFT);
+	            dc.drawText(AuxDataBlock.mDataX, AuxDataBlock.mDataY, mDataFont, dAuxHeartRate, Graphics.TEXT_JUSTIFY_CENTER);
+	            dc.drawText(AuxDataBlock.mUnitsX + (dc.getTextWidthInPixels(dAuxHeartRate, mDataFont) / 2), AuxDataBlock.mUnitsY, mUnitsFont, mUnitsString, Graphics.TEXT_JUSTIFY_LEFT);
+	            
+	            dc.drawText(DeltaDataBlock.mLabelX, DeltaDataBlock.mLabelY, mLabelFont, DeltaDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_LEFT);
+	            dc.drawText(DeltaDataBlock.mDataX, DeltaDataBlock.mDataY, mDataFont, dOHRHeartRateDelta, Graphics.TEXT_JUSTIFY_CENTER);
+	            dc.drawText(DeltaDataBlock.mUnitsX + (dc.getTextWidthInPixels(dOHRHeartRateDelta, mDataFont) / 2), DeltaDataBlock.mUnitsY, mUnitsFont, mUnitsString, Graphics.TEXT_JUSTIFY_LEFT);
+	            
+	            // add code to display % difference
+	            dc.drawText(PercentDataBlock.mLabelX, PercentDataBlock.mLabelY, mLabelFont, PercentDataBlock.mLabelString, Graphics.TEXT_JUSTIFY_LEFT);				
+				dc.setColor( txtColour, Graphics.COLOR_TRANSPARENT);
+				// write % to screen
+				dc.drawText(PercentDataBlock.mDataX, PercentDataBlock.mDataY, mDataFont, mCalcPercent, Graphics.TEXT_JUSTIFY_CENTER);	
+	            dc.setColor(fgColor, Graphics.COLOR_TRANSPARENT);
+
+	        }
+	    }
+        // Call parent's onUpdate(dc) to redraw the layout ONLY if using layouts!
+        //View.onUpdate(dc);
+ 		//System.println("redraw field complete");
+    }
+
+(:post0_2_8Code)    
+    function createOutputStrings() {		
+		var deltaColour;
+				        
+        if  ($._mApp.currentHeartRate == null) {
+        	dAuxHeartRate = "--";
+        } else {
+        	if ($._mApp.currentHeartRate == 0) {
+        		dAuxHeartRate = "0";
+        	} else{
+        		dAuxHeartRate = $._mApp.currentHeartRate.format("%.0u");
+        	}
+        }
+		
+		if  ($._mApp.OHRHeartRateDelta == null) {
+        	dOHRHeartRateDelta = "--";
+        } else {
+            if  ($._mApp.OHRHeartRateDelta == 0) {
+            	dOHRHeartRateDelta = "0";
+            } else {
+            	dOHRHeartRateDelta = $._mApp.OHRHeartRateDelta.format("%+.0i");
+            }
+		}
+		
+		if  ($._mApp.OHRHeartRate == null) {
+        	dOHRHeartRate = "--";
+        } else {
+        	if ($._mApp.OHRHeartRate == 0) {
+        		dOHRHeartRate = "0";
+        	} else {	
+        		dOHRHeartRate = $._mApp.OHRHeartRate.format("%.0u");
+        	}
+        }
+        
+        if ($._mApp.OHRHeartRate != null && $._mApp.currentHeartRate != null) {
+	        var mPercent = 0;
+	        if ($._mApp.currentHeartRate != 0) {
+	        	// avoid divide by zero
+	           	mPercent = ($._mApp.OHRHeartRateDelta.toNumber().toFloat() / $._mApp.currentHeartRate.toNumber().toFloat()) * 100;
+	        }
+	        
+	        if ($._mApp.OHRHeartRateDelta == 0) {
+	        	// green OK
+	        	deltaColour = Graphics.COLOR_DK_GREEN;
+	        	mCalcPercent = "0%";
+	        } else {
+	        	deltaColour = Graphics.COLOR_DK_RED;
+	        	mCalcPercent = mPercent.format("%+.0i") + "%";  
+	        	mCalcPercent = ( mPercent == 0 ? "0%" : mCalcPercent);
+	        	// clean up display of wacky values
+	        	mCalcPercent = ( mPercent > 100 ? " >100%" : mCalcPercent); 	            
+			}    
+ 		} else {
+ 			// null values make no sense
+ 			deltaColour = Graphics.COLOR_DK_RED;
+ 			mCalcPercent = "--";		
+ 		}
+ 		
+        //Sys.println("Output values: Aux, OHR, delta = "+$._mApp.currentHeartRate+", "+$._mApp.OHRHeartRate+", "+$._mApp.OHRHeartRateDelta);   
+        System.println("Output Strings: Aux, OHR, delta, % = "+dAuxHeartRate+", "+dOHRHeartRate+", "+dOHRHeartRateDelta+", "+mCalcPercent);
+    
+    	return deltaColour;
+    }
+    
     
     function onTimerStart() {
-        mFitContributor.setTimerRunning( true );
+    	if (mFitContributor != null ) { mFitContributor.setTimerRunning( true );}
     }
 
     function onTimerStop() {
-        mFitContributor.setTimerRunning( false );
+        if (mFitContributor != null ) { mFitContributor.setTimerRunning( false);}
     }
 
     function onTimerPause() {
-        mFitContributor.setTimerRunning( false );
+        if (mFitContributor != null ) { mFitContributor.setTimerRunning( false );}
     }
 
     function onTimerResume() {
-        mFitContributor.setTimerRunning( true );
+        if (mFitContributor != null ) { mFitContributor.setTimerRunning( true );}
     }
 
     function onTimerLap() {
-        mFitContributor.onTimerLap();
+        if (mFitContributor != null ) {mFitContributor.onTimerLap();}
     }
 
     function onTimerReset() {
-        mFitContributor.onTimerReset();
+        if (mFitContributor != null ) {mFitContributor.onTimerReset();}
     }
 
 }
