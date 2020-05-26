@@ -9,6 +9,7 @@ using Toybox.System as System;
 // Maybe update to HRV version of code
 //0.2.8
 // updated ANT code again
+// Moved to DeltaWidget code as this works!
 
 var _mApp;
 
