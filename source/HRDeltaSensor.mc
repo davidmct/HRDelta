@@ -225,7 +225,7 @@ class AuxHRSensor extends Ant.GenericChannel {
 	            var event = (payload[1] & 0xFF);	            
 	            switch( event) {
 	            	case Ant.MSG_CODE_EVENT_CHANNEL_CLOSED:
-	            		Sys.println("ANT:EVENT: closed");
+	            		if (mDebuggingANT) {Sys.println("ANT:EVENT: closed");}
 	            		// initialise again
 	            		//deviceCfg = null;
 	            		//initialize(mSavedAntID);
@@ -239,16 +239,16 @@ class AuxHRSensor extends Ant.GenericChannel {
 						//data.currentHeartRate = 0;
 						//mSearching = true;
 						// wait for another message?
-						Sys.println( "RX_FAIL in AntHandler");
+						if (mDebuggingANT) {Sys.println( "RX_FAIL in AntHandler");}
 						break;
 					case Ant.MSG_CODE_EVENT_RX_FAIL_GO_TO_SEARCH:
-						Sys.println( "ANT:RX_FAIL, search/wait");
+						if (mDebuggingANT) {Sys.println( "ANT:RX_FAIL, search/wait");}
 						// wait for more messages
 						//data.currentHeartRate = 0;
 						mSearching = true;	
 						break;
 					case Ant.MSG_CODE_EVENT_RX_SEARCH_TIMEOUT:
-						Sys.println( "ANT: EVENT SEARCH TIMEOUT");
+						if (mDebuggingANT) {Sys.println( "ANT: EVENT SEARCH TIMEOUT");}
 						//closeSensor();
 						//deviceCfg = null;
 	            		//initialize(mSavedAntID);
