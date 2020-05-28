@@ -61,7 +61,7 @@ class HRDeltaView extends Ui.DataField {
     hidden var xCenter;
     hidden var yCenter;
     
-    hidden var mFitContributor;
+    hidden var mFitContributor = null;
     //hidden var $._mApp.mAntSensor;
     hidden var mSensorFound = false;
     hidden var mTicker = 0;
@@ -90,7 +90,8 @@ class HRDeltaView extends Ui.DataField {
         	System.println(e.getErrorMessage());
             $._mApp.mSensor = null;
         }
-              
+        //0.2.9 forgot to add this back!!
+        mFitContributor = new AuxHRFitContributor(self);             
         mTicker = 0;
     }
 

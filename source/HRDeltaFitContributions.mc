@@ -90,7 +90,7 @@ class AuxHRFitContributor {
             	mAuxHRField.setData( 0 );
             }
             
-            Sys.println( "OHR, Strap, Delta: " + $._mApp.OHRHeartRate, heartRate, $._mApp.OHRHeartRateDelta );
+            Sys.println( "OHR, Strap, Delta: " + $._mApp.OHRHeartRate+", "+heartRate+", "+$._mApp.OHRHeartRateDelta );
         }
     }
 
