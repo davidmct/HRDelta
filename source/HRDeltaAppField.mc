@@ -13,7 +13,7 @@ using Toybox.System as System;
 
 var _mApp;
 
-class HRDeltaApp extends App.AppBase {
+class HRDeltaAppField extends App.AppBase {
 	
 	//var mAntSensor; 
 	//var mAntID = 0;
