@@ -85,10 +85,14 @@ class HRDeltaView extends Ui.DataField {
             //Create the sensor object and open it
             System.println("HRSensor initialise being called with mAntID = "+$._mApp.mAntID);
             $._mApp.mSensor = new AuxHRSensor($._mApp.mAntID);
-            $._mApp.mSensor.open();
         } catch(e instanceof Ant.UnableToAcquireChannelException) {
         	System.println(e.getErrorMessage());
             $._mApp.mSensor = null;
+        }
+        // 0.3.0
+        // moved from try and now test for null
+        if ($._mApp.mSensor != null ) {
+        	$._mApp.mSensor.open();
         }
         //0.2.9 forgot to add this back!!
         mFitContributor = new AuxHRFitContributor(self);             
@@ -560,3 +564,4 @@ class HRDeltaView extends Ui.DataField {
     }
 
 }
+

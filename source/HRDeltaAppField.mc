@@ -10,6 +10,8 @@ using Toybox.System as System;
 //0.2.8
 // updated ANT code again
 // Moved to DeltaWidget code as this works!
+//0.3.0
+// failure to acquire strap now returns null in init
 
 var _mApp;
 
@@ -71,7 +73,7 @@ class HRDeltaAppField extends App.AppBase {
    
     //! Return the initial view of your application here
     function getInitialView() {
-        return [ new HRDeltaView() ];
+        return [ new HRDeltaView()];
     }
 
 }
