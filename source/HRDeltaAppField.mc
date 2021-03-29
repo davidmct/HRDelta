@@ -12,6 +12,8 @@ using Toybox.System as System;
 // Moved to DeltaWidget code as this works!
 //0.3.0
 // failure to acquire strap now returns null in init
+//0.3.1
+// Added average to FIT
 
 var _mApp;
 
@@ -28,6 +30,11 @@ class HRDeltaAppField extends App.AppBase {
 	var currentHeartRate = 0;
 	var OHRHeartRateDelta = 0;
 	var OHRHeartRate = 0;
+	
+	var sumOHR = 0.0;
+	var sumStrap = 0.0;
+	var cntStrap = 0;
+	var cntOHR = 0;
 
     function initialize() {
         AppBase.initialize();
