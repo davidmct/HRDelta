@@ -23,5 +23,26 @@
       unitLabel="@Strings.lHeartRateUnits"
       fillColor="#f65b3a" />
 
+    <fitField id="2"
+      displayInChart="true"
+      displayInActivityLaps="false"
+      displayInActivitySummary="false"
+      sortOrder="2"
+      precision="0"
+      chartTitle="@Strings.lAuxAvgCT"
+      dataLabel="@Strings.lAuxAvgHeartRate"
+      unitLabel="@Strings.lHeartRateUnits"
+      fillColor="#f25b0a" />
+
+    <fitField id="3"
+      displayInChart="true"
+      displayInActivityLaps="false"
+      displayInActivitySummary="false"
+      sortOrder="3"
+      precision="0"
+      chartTitle="@Strings.lOHRAvgCT"
+      dataLabel="@Strings.lOHRAvgHeartRate"
+      unitLabel="@Strings.lHeartRateUnits"
+      fillColor="#f65b3a" />
   </fitContributions>
 </resources>
