@@ -28,10 +28,10 @@ class AuxHRFitContributor {
     // Constructor
     function initialize(dataField) {
     	// assume SINT is signed!
-        mAuxHRField    = dataField.createField("AuxHeartRate",   AUX_HR_FIELD_ID,     Fit.DATA_TYPE_UINT8, { :nativeNum=>3,:mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
-        mDeltaHRField  = dataField.createField("DeltaHeartRate", DELTA_HR_FIELD_ID,   Fit.DATA_TYPE_SINT8, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
-       	mAuxHRAvgField = dataField.createField("Aux HR avg",     AUX_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
-       	mOHRAvgField = dataField.createField("OHR HR avg",       OHR_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
+        mAuxHRField    = dataField.createField("AuxHeartRate",   AUX_HR_FIELD_ID,     Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
+        mDeltaHRField  = dataField.createField("DeltaHeartRate", DELTA_HR_FIELD_ID,   Fit.DATA_TYPE_SINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
+       	mAuxHRAvgField = dataField.createField("AuxBPMavg",      AUX_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
+       	mOHRAvgField =   dataField.createField("OpticalBPMavg",  OHR_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
        	       	
         mAuxHRField.setData(0);
         mDeltaHRField.setData(0);
@@ -83,7 +83,9 @@ class AuxHRFitContributor {
                 $._mApp.cntStrap++;
                 $._mApp.sumStrap += heartRate;
                 mAuxHRAvgField.setData( ($._mApp.sumStrap / $._mApp.cntStrap).toNumber() );
-               
+                
+				//Sys.println("B1: s cnt "+$._mApp.cntStrap);
+                
                 // intialisation should have happened as we have a heartrate
                 // maybe simulator issue until you start faking data
                 var OHRRate = $._mApp.OHRHeartRate;            
@@ -95,20 +97,29 @@ class AuxHRFitContributor {
                 
                 	$._mApp.OHRHeartRateDelta = OHRRate - heartRate;
                 	mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+                	
+                	//Sys.println("B2: o cnt "+$._mApp.cntOHR);
+                	
                 } else {
                 	// No OHR so hence no delta either!!
                 	$._mApp.OHRHeartRateDelta = 0;
             		mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+            		
+            		//Sys.println("B3");
+            		
                 }
+                
             } else {
             	$._mApp.OHRHeartRateDelta = 0;
             	mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
             	mAuxHRField.setData( 0 );
             	mAuxHRAvgField.setData( 0);
             	mOHRAvgField.setData( 0);
+            	
+            	//Sys.println("B4");
             }
             
-            Sys.println( "OHR, Strap, Delta: " + $._mApp.OHRHeartRate+", "+heartRate+", "+$._mApp.OHRHeartRateDelta );
+            //Sys.println( "OHR, Strap, Delta: " + $._mApp.OHRHeartRate+", "+heartRate+", "+$._mApp.OHRHeartRateDelta );
         }
     }
 
