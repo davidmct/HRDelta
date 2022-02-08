@@ -3,6 +3,8 @@ using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Graphics;
 using Toybox.System as System;
 
+//0.3.2
+// Added new devices Epic gen 2 and Fenix 7
 
 //0.2.7 
 // Look at adding check that ANT payload is at least 2 long
