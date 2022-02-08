@@ -8,7 +8,7 @@ const BORDER_PAD = 4;
 const UNITS_SPACING = 2;
 const TOP_PAD = 30;
 
-const DEBUGGING = true;  // skip ANT search
+const DEBUGGING = false;  // skip ANT search
 const DEBUGGING2 = false; // HR data output
 const mDebuggingANT  = false;
 
