@@ -3,7 +3,7 @@ using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Graphics;
 using Toybox.System as System;
 
-//0.3.2
+//0.3.2 in release name but was 0.3.3
 // Added new devices Epic gen 2 and Fenix 7
 
 //0.2.7 
