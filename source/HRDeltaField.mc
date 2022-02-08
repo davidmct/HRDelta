@@ -119,7 +119,7 @@ class HRDeltaView extends Ui.DataField {
 	    DeltaDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lDeltaHeartRate);
 	    PercentDataBlock.mLabelString = Ui.loadResource(Rez.Strings.lDeltaPercent);
 
-	    var top = TOP_PAD + BORDER_PAD;
+	    var top = TOP_PAD + BORDER_PAD + 15; // added 15 for epix2
 	    
         // Units width does not change, compute only once
         if (mUnitsWidth == null) {
@@ -413,7 +413,7 @@ class HRDeltaView extends Ui.DataField {
         if (DEBUGGING) {
         	mSensorFound = true;
         	mTicker =6;
-        	$._mApp.mSearching = false;
+        	$._mApp.mSensor.mSearching = false;
         	$._mApp.currentHeartRate = 110;
         	$._mApp.OHRHeartRate = 100;
         	$._mApp.OHRHeartRateDelta = $._mApp.OHRHeartRate - $._mApp.currentHeartRate ;
