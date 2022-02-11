@@ -12,6 +12,7 @@ const AUX_HR_FIELD_ID    = 0;
 const DELTA_HR_FIELD_ID  = 1;
 const AUX_HR_AVG_FIELD_ID  = 2;
 const OHR_HR_AVG_FIELD_ID  = 3;
+const OHR_HR_FIELD_ID = 4;
 
 class AuxHRFitContributor {
 
@@ -24,6 +25,7 @@ class AuxHRFitContributor {
     hidden var mDeltaHRField     = null;
     hidden var mAuxHRAvgField	= null;
 	hidden var mOHRAvgField 	= null;
+    hidden var mOHRField = null;
 	
     // Constructor
     function initialize(dataField) {
@@ -32,11 +34,13 @@ class AuxHRFitContributor {
         mDeltaHRField  = dataField.createField("DeltaHeartRate", DELTA_HR_FIELD_ID,   Fit.DATA_TYPE_SINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
        	mAuxHRAvgField = dataField.createField("AuxBPMavg",      AUX_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
        	mOHRAvgField =   dataField.createField("OpticalBPMavg",  OHR_HR_AVG_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
+       	mOHRField =   dataField.createField("OpticalHeartRate",  OHR_HR_FIELD_ID, Fit.DATA_TYPE_UINT16, { :mesgType=>Fit.MESG_TYPE_RECORD, :units=>"bpm" });
        	       	
         mAuxHRField.setData(0);
         mDeltaHRField.setData(0);
         mAuxHRAvgField.setData( 0);
         mOHRAvgField.setData( 0);
+        mOHRField.setData( 0);
     }
 
 (:pre0_2_8Code)
@@ -63,6 +67,7 @@ class AuxHRFitContributor {
             	sensor.data.OHRHeartRateDelta = 0;
             	mDeltaHRField.setData( sensor.data.OHRHeartRateDelta.toNumber());
             	mAuxHRField.setData( 0 );
+                mOHRField.setData( 0);
             }
             
             Sys.println( "OHR " + sensor.data.OHRHeartRate);
@@ -97,6 +102,8 @@ class AuxHRFitContributor {
                 
                 	$._mApp.OHRHeartRateDelta = OHRRate - heartRate;
                 	mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
+
+                    mOHRField.setData( OHRRate.toNumber());
                 	
                 	//Sys.println("B2: o cnt "+$._mApp.cntOHR);
                 	
@@ -104,7 +111,7 @@ class AuxHRFitContributor {
                 	// No OHR so hence no delta either!!
                 	$._mApp.OHRHeartRateDelta = 0;
             		mDeltaHRField.setData( $._mApp.OHRHeartRateDelta.toNumber());
-            		
+            		mOHRField.setData( 0);
             		//Sys.println("B3");
             		
                 }
@@ -115,7 +122,7 @@ class AuxHRFitContributor {
             	mAuxHRField.setData( 0 );
             	mAuxHRAvgField.setData( 0);
             	mOHRAvgField.setData( 0);
-            	
+            	mOHRField.setData( 0);
             	//Sys.println("B4");
             }
             
