@@ -105,7 +105,7 @@ class AuxHRFitContributor {
 
                     mOHRField.setData( OHRRate.toNumber());
                 	
-                	//Sys.println("B2: o cnt "+$._mApp.cntOHR);
+                	//Sys.println("B2: o cnt "+$._mApp.cntOHR+" OHR="+OHRRate.toNumber());
                 	
                 } else {
                 	// No OHR so hence no delta either!!
