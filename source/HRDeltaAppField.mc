@@ -7,7 +7,7 @@ using Toybox.System as System;
 // add 4 field data field and just a summary view to the backlog.
 // Maybe do summary of averages and difference to FIT
 
-//0.3.5 
+//0.3.5 (confused ordering)
 // Added OHR to FIT file and output graph
 
 //0.3.2 in release name but was 0.3.3
