@@ -3,7 +3,14 @@ using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Graphics;
 using Toybox.System as System;
 
-//0.3.2
+// To do
+// add 4 field data field and just a summary view to the backlog.
+// Maybe do summary of averages and difference to FIT
+
+//0.3.5 (confused ordering)
+// Added OHR to FIT file and output graph
+
+//0.3.2 in release name but was 0.3.3
 // Added new devices Epic gen 2 and Fenix 7
 
 //0.2.7 
