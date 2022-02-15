@@ -94,6 +94,7 @@ class HRDeltaView extends Ui.DataField {
         if ($._mApp.mSensor != null ) {
         	$._mApp.mSensor.open();
         }
+        
         //0.2.9 forgot to add this back!!
         mFitContributor = new AuxHRFitContributor(self);             
         mTicker = 0;
