@@ -3,6 +3,9 @@
 <iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
     <iq:application entry="HRDeltaAppField" id="774d399ccd3b4eaf8c13063419776dd8" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="2.4.0" name="@Strings.AppName" type="datafield" version="0.3.0">
         <iq:products>
+            <iq:product id="descentmk1"/>
+            <iq:product id="descentmk2"/>
+            <iq:product id="descentmk2s"/>
             <iq:product id="epix2"/>
             <iq:product id="fenix5"/>
             <iq:product id="fenix5plus"/>
