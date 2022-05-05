@@ -8,7 +8,8 @@ using Toybox.System as System;
 // Maybe do summary of averages and difference to FIT
 
 //0.4.0
-// Add Descent devices and test
+// Add Descent devices and test.
+// MK1 and Mk2 only
 
 //0.3.5 (confused ordering)
 // Added OHR to FIT file and output graph
