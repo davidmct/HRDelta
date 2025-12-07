@@ -7,6 +7,12 @@ using Toybox.System as System;
 // add 4 field data field and just a summary view to the backlog.
 // Maybe do summary of averages and difference to FIT
 
+// v0.5.2
+// SDK 8.4.0 Added FR570 versions
+
+// v0.5.1
+// SDK 8.2.3 and Added devices
+
 // V0.5.0
 // SDK 7.3.1 
 // Added FR965 by request
